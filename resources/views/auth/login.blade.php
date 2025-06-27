@@ -3,7 +3,7 @@
         
         <div class="hidden lg:flex w-1/3 bg-red-900 justify-center items-center p-12">
             <div class="text-center text-white">
-                <img class="h-16 w-auto mx-auto mb-6" src="https://tailwindui.com/img/logos/mark.svg?color=white" alt="Logo Aplikasi">
+                <img class="h-40 w-auto mx-auto mb-6" src="{{ asset('images/logo-aplikasi.png') }}" alt="Logo Aplikasi">
                 <h1 class="text-3xl font-bold mb-4">Selamat Datang Kembali</h1>
                 <p class="text-lg opacity-80">
                     Silakan masuk untuk melanjutkan ke dashboard admin Anda.

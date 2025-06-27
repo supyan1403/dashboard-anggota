@@ -17,32 +17,57 @@
 
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-        <aside class="w-64 bg-gray-800 text-white flex-shrink-0 flex flex-col fixed h-screen">
-            <div class="h-16 flex items-center justify-center bg-gray-900 flex-shrink-0">
-                <h2 class="text-xl font-semibold tracking-widest">Admin Panel</h2>
-            </div>
-            <div class="flex flex-col justify-between flex-grow">
-                <nav class="mt-4">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 py-3 px-6 transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-gray-700 text-white border-l-4 border-red-800' : 'text-gray-400 hover:bg-gray-700 hover:text-white' }}">
-                        <i class="fa-solid fa-house fa-fw"></i><span>Home</span>
-                    </a>
-                    <a href="{{ route('anggota.index') }}" class="flex items-center gap-3 py-3 px-6 transition-colors duration-200 {{ request()->routeIs('anggota.*') ? 'bg-gray-700 text-white border-l-4 border-red-800' : 'text-gray-400 hover:bg-gray-700 hover:text-white' }}">
-                        <i class="fa-solid fa-users fa-fw"></i><span>Anggota</span>
-                    </a>
-                    <a href="{{ route('pembina.index') }}" class="flex items-center gap-3 py-3 px-6 transition-colors duration-200 {{ request()->routeIs('pembina.*') ? 'bg-gray-700 text-white border-l-4 border-red-800' : 'text-gray-400 hover:bg-gray-700 hover:text-white' }}">
-                        <i class="fa-solid fa-user-tie fa-fw"></i><span>Pembina</span>
-                    </a>
-                </nav>
-                <div class="p-4">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="flex items-center gap-3 py-3 px-6 text-red-500 hover:bg-gray-700 hover:text-white transition-colors duration-200">
-                            <i class="fa-solid fa-right-from-bracket fa-fw"></i><span>Logout</span>
-                        </a>
-                    </form>
-                </div>
-            </div>
-        </aside>
+        <aside class="w-64 text-white flex-shrink-0 flex flex-col fixed h-screen bg-gradient-to-b from-gray-800 to-gray-900">
+    <div class="h-16 flex items-center justify-center flex-shrink-0 border-b border-gray-700/50">
+        <h2 class="text-xl font-semibold tracking-wider text-white">Admin Panel</h2>
+    </div>
+
+    <div class="flex flex-col justify-between flex-grow">
+        
+        <nav class="mt-4">
+            <a href="{{ route('dashboard') }}" 
+               class="flex items-center gap-3 py-3 px-6 transition-colors duration-200 
+                      {{ request()->routeIs('dashboard') 
+                         ? 'bg-gray-700/50 text-white border-l-4 border-red-500' 
+                         : 'text-gray-400 hover:bg-gray-700/50 hover:text-white' }}">
+                <i class="fa-solid fa-house fa-fw"></i>
+                <span>Home</span>
+            </a>
+
+            <a href="{{ route('anggota.index') }}" 
+               class="flex items-center gap-3 py-3 px-6 transition-colors duration-200
+                      {{ request()->routeIs('anggota.*') 
+                         ? 'bg-gray-700/50 text-white border-l-4 border-red-500' 
+                         : 'text-gray-400 hover:bg-gray-700 hover:text-white' }}">
+                <i class="fa-solid fa-users fa-fw"></i>
+                <span>Anggota</span>
+            </a>
+
+            <a href="{{ route('pembina.index') }}" 
+               class="flex items-center gap-3 py-3 px-6 transition-colors duration-200
+                      {{ request()->routeIs('pembina.*') 
+                         ? 'bg-gray-700/50 text-white border-l-4 border-red-500' 
+                         : 'text-gray-400 hover:bg-gray-700 hover:text-white' }}">
+                <i class="fa-solid fa-user-tie fa-fw"></i>
+                <span>Pembina</span>
+            </a>
+        </nav>
+
+        <div class="px-4 py-4 mt-4">
+            <hr class="border-t border-gray-700 mb-4">
+            
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <a href="{{ route('logout') }}" 
+                   onclick="event.preventDefault(); this.closest('form').submit();"
+                   class="flex items-center justify-center gap-3 w-full py-2 px-4 rounded-lg text-red-400 hover:bg-red-500 hover:text-white transition-colors duration-200">
+                    <i class="fa-solid fa-right-from-bracket fa-fw"></i>
+                    <span>Logout</span>
+                </a>
+            </form>
+        </div>
+    </div>
+</aside>
 
         <div class="flex-1 flex flex-col overflow-hidden ml-64">
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-8">
