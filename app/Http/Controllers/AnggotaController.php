@@ -27,25 +27,25 @@ class AnggotaController extends Controller
 
         // 2. Buat query dasar
         $query = Anggota::query();
-        
+
         // 3. Logika Filter, Search, dan Sort (sekarang langsung di sini)
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('nama', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('kelas', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('kelas', 'like', '%' . $searchTerm . '%');
             });
         }
 
-       // Filter berdasarkan Tingkat Kelas (X, XI, XII)
-if ($request->filled('filter_tingkat')) {
-    $query->where('tingkat_kelas', $request->input('filter_tingkat'));
-}
+        // Filter berdasarkan Tingkat Kelas (X, XI, XII)
+        if ($request->filled('filter_tingkat')) {
+            $query->where('tingkat_kelas', $request->input('filter_tingkat'));
+        }
 
-// Filter berdasarkan Pengelompokan Kelas (1, 2, 3, ...)
-if ($request->filled('filter_kelompok')) {
-    $query->where('pengelompokan_kelas', $request->input('filter_kelompok'));
-}
+        // Filter berdasarkan Pengelompokan Kelas (1, 2, 3, ...)
+        if ($request->filled('filter_kelompok')) {
+            $query->where('pengelompokan_kelas', $request->input('filter_kelompok'));
+        }
 
         $sortColumn = $request->input('sort', 'id');
         $sortDirection = $request->input('direction', 'desc');
@@ -54,7 +54,7 @@ if ($request->filled('filter_kelompok')) {
 
         if ($sortColumn == 'kelas') {
             $query->orderBy('tingkat_kelas', $sortDirection)
-                  ->orderByRaw('CAST(pengelompokan_kelas AS UNSIGNED) ' . $sortDirection);
+                ->orderByRaw('CAST(pengelompokan_kelas AS UNSIGNED) ' . $sortDirection);
         } else {
             $query->orderBy($sortColumn, $sortDirection);
         }
@@ -68,7 +68,7 @@ if ($request->filled('filter_kelompok')) {
             'stats' => $stats
         ]);
     }
-    
+
     // ===============================================
     // ===== METHOD BARU UNTUK KENAIKAN KELAS ======
     // ===============================================
@@ -120,7 +120,6 @@ if ($request->filled('filter_kelompok')) {
             });
 
             return redirect()->route('anggota.index')->with('success', 'Migrasi kenaikan kelas berhasil diselesaikan!');
-
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat proses migrasi: ' . $e->getMessage()]);
         }

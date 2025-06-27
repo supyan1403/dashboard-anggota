@@ -11,40 +11,40 @@ class PembinaController extends Controller
     /**
      * Menampilkan daftar semua pembina.
      */
-  public function index(Request $request)
-{
-    // 1. Ambil semua periode unik dari database untuk pilihan filter
-    // diurutkan dari yang terbaru, dan hanya yang tidak kosong.
-    $periods = Pembina::query()
-        ->select('periode')
-        ->whereNotNull('periode')
-        ->distinct()
-        ->orderBy('periode', 'desc')
-        ->pluck('periode');
+    public function index(Request $request)
+    {
+        // 1. Ambil semua periode unik dari database untuk pilihan filter
+        // diurutkan dari yang terbaru, dan hanya yang tidak kosong.
+        $periods = Pembina::query()
+            ->select('periode')
+            ->whereNotNull('periode')
+            ->distinct()
+            ->orderBy('periode', 'desc')
+            ->pluck('periode');
 
-    // 2. Buat query dasar
-    $query = Pembina::query();
+        // 2. Buat query dasar
+        $query = Pembina::query();
 
-    // 3. Terapkan logika pencarian jika ada input search
-    if ($request->filled('search')) {
-        $searchTerm = $request->input('search');
-        $query->where(function($q) use ($searchTerm) {
-            $q->where('nama', 'like', '%' . $searchTerm . '%')
-              ->orWhere('jabatan', 'like', '%' . $searchTerm . '%');
-        });
+        // 3. Terapkan logika pencarian jika ada input search
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('jabatan', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // 4. TERAPKAN LOGIKA FILTER PERIODE (BAGIAN BARU)
+        if ($request->filled('filter_periode')) {
+            $query->where('periode', $request->input('filter_periode'));
+        }
+
+        // 5. Ambil data dengan paginasi dan sorting, lalu tambahkan withQueryString()
+        $pembina = $query->latest()->paginate(5)->withQueryString();
+
+        // 6. Kirim data ke view, termasuk variabel $periods
+        return view('pembina.index', compact('pembina', 'periods'));
     }
-
-    // 4. TERAPKAN LOGIKA FILTER PERIODE (BAGIAN BARU)
-    if ($request->filled('filter_periode')) {
-        $query->where('periode', $request->input('filter_periode'));
-    }
-
-    // 5. Ambil data dengan paginasi dan sorting, lalu tambahkan withQueryString()
-    $pembina = $query->latest()->paginate(5)->withQueryString();
-
-    // 6. Kirim data ke view, termasuk variabel $periods
-    return view('pembina.index', compact('pembina', 'periods'));
-}
 
     /**
      * Menampilkan form untuk membuat pembina baru.
@@ -108,7 +108,7 @@ class PembinaController extends Controller
             if ($pembina->foto) {
                 Storage::disk('public')->delete($pembina->foto);
             }
-            
+
             // Simpan foto baru dan update path-nya
             $path = $request->file('foto')->store('pembina_fotos', 'public');
             $validatedData['foto'] = $path;

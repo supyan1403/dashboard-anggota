@@ -6,6 +6,7 @@ use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\PembinaController;
 use App\Models\Anggota; // Import model Anggota
 use App\Models\Pembina; // Asumsi ada model Pembina
+use App\Http\Controllers\AbsensiController;
 
 // Halaman landing default, bisa dihapus jika tidak perlu
 Route::redirect('/', '/login');
@@ -41,7 +42,7 @@ Route::get('/dashboard', function () {
 
 
 Route::middleware('auth')->group(function () {
-    
+
     // ===============================================
     // ===== RUTE BARU UNTUK KENAIKAN KELAS (TAMBAHKAN DI SINI) =====
     // ===============================================
@@ -55,7 +56,12 @@ Route::middleware('auth')->group(function () {
 
     // Resource route untuk Pembina
     Route::resource('pembina', PembinaController::class);
+
+    // Untuk Absensi
+    Route::resource('absensi', AbsensiController::class)->parameters([
+        'absensi' => 'sesi'
+    ]);
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

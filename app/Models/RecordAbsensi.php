@@ -9,4 +9,9 @@ class RecordAbsensi extends Model
 {
     use HasFactory;
     protected $fillable = ['sesi_absensi_id', 'anggota_id', 'status'];
+
+    public function anggota()
+    {
+        return $this->belongsTo(Anggota::class);
+    }
 }
