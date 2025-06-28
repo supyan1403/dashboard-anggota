@@ -69,6 +69,46 @@
         </div>
     </div>
 
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Ringkasan Kehadiran Terakhir</h3>
+            @if ($sesiTerbaru)
+                <div style="height: 250px;" class="flex justify-center items-center">
+                    <canvas id="absensiPieChart"></canvas>
+                </div>
+            @else
+                <p class="text-sm text-gray-500 text-center py-16">Belum ada data absensi.</p>
+            @endif
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Informasi Absensi Terakhir</h3>
+            @if ($sesiTerbaru)
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Kegiatan</p>
+                        <p class="font-semibold text-gray-800">{{ $sesiTerbaru->keterangan }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Tanggal</p>
+                        <p class="font-semibold text-gray-800">
+                            {{ \Carbon\Carbon::parse($sesiTerbaru->tanggal)->format('d F Y') }}</p>
+                    </div>
+                    <div class="border-t pt-4">
+                        <a href="{{ route('absensi.show', $sesiTerbaru->id) }}"
+                            class="font-medium text-indigo-600 hover:text-indigo-800">
+                            Lihat Laporan Detail &rarr;
+                        </a>
+                    </div>
+                </div>
+            @else
+                <p class="text-sm text-gray-500 text-center py-16">Belum ada data absensi.</p>
+            @endif
+        </div>
+
+    </div>
+
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -119,6 +159,49 @@
                 @endif
             });
         </script>
+
+         <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cek jika data sesi terbaru ada
+            @if(isset($sesiTerbaru))
+                const pieCtx = document.getElementById('absensiPieChart');
+
+                if(pieCtx) {
+                    new Chart(pieCtx, {
+                        type: 'doughnut', // Tipe grafik: doughnut (seperti donat)
+                        data: {
+                            labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
+                            datasets: [{
+                                label: 'Status Kehadiran',
+                                data: [
+                                    {{ $sesiTerbaru->hadir_count }},
+                                    {{ $sesiTerbaru->izin_count }},
+                                    {{ $sesiTerbaru->sakit_count }},
+                                    {{ $sesiTerbaru->alpa_count }}
+                                ],
+                                backgroundColor: [
+                                    'rgba(22, 163, 74, 0.8)',  // Hijau
+                                    'rgba(59, 130, 246, 0.8)', // Biru
+                                    'rgba(234, 179, 8, 0.8)',  // Kuning
+                                    'rgba(239, 68, 68, 0.8)'   // Merah
+                                ],
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom', // Pindahkan legenda ke bawah
+                                }
+                            }
+                        }
+                    });
+                }
+            @endif
+        });
+    </script>
     @endpush
 
 </x-app-layout>

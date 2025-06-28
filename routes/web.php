@@ -6,6 +6,7 @@ use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\PembinaController;
 use App\Models\Anggota; // Import model Anggota
 use App\Models\Pembina; // Asumsi ada model Pembina
+use App\Models\SesiAbsensi;
 use App\Http\Controllers\AbsensiController;
 
 // Halaman landing default, bisa dihapus jika tidak perlu
@@ -17,10 +18,10 @@ Route::redirect('/', '/login');
 Route::get('/dashboard', function () {
     // Data untuk kartu statistik
     $totalAnggota = Anggota::count();
-    $anggotaAktif = Anggota::where('status', true)->count(); // <-- TAMBAHKAN INI
+    $anggotaAktif = Anggota::where('status', true)->count(); // <-- TAMBAHKAN BARIS INI
     $pembinaTerbaru = Pembina::latest()->first();
 
-    // Data untuk grafik
+    // Data untuk grafik distribusi anggota
     $anggotaPerKelas = [
         'X' => Anggota::where('tingkat_kelas', 'X')->count(),
         'XI' => Anggota::where('tingkat_kelas', 'XI')->count(),
@@ -31,12 +32,21 @@ Route::get('/dashboard', function () {
         'data' => array_values($anggotaPerKelas),
     ];
 
+    // Data untuk widget absensi terakhir
+    $sesiTerbaru = \App\Models\SesiAbsensi::withCount([
+        'records as hadir_count' => fn($q) => $q->where('status', 'Hadir'),
+        'records as izin_count' => fn($q) => $q->where('status', 'Izin'),
+        'records as sakit_count' => fn($q) => $q->where('status', 'Sakit'),
+        'records as alpa_count' => fn($q) => $q->where('status', 'Alpa'),
+    ])->latest('tanggal')->first();
+
     // Kirim semua data ke view
     return view('dashboard', [
         'totalAnggota' => $totalAnggota,
-        'anggotaAktif' => $anggotaAktif, // <-- Kirim data baru
+        'anggotaAktif' => $anggotaAktif, // <-- PASTIKAN DIKIRIM DI SINI
         'pembina' => $pembinaTerbaru,
         'chartData' => $chartData,
+        'sesiTerbaru' => $sesiTerbaru, 
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
