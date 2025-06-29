@@ -41,4 +41,10 @@ class Anggota extends Model
         'kelas',
         'status',
     ];
+
+    // app/Models/Anggota.php
+   public function kegiatanYangDiikuti()
+{
+    return $this->belongsToMany(Kegiatan::class, 'anggota_kegiatan');
+}
 }

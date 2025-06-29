@@ -1,5 +1,5 @@
 <x-app-layout>
-    <form action="{{ route('absensi.update', $sesi->id) }}" method="POST">
+    <form id="absensi-form" action="{{ route('absensi.update', $sesi->id) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -43,7 +43,7 @@
                             <th class="py-3 px-4">Status Kehadiran</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-700">
+                    <tbody id="absensi-table-body" class="text-gray-700">
                         @forelse ($records as $record)
                             <tr class="border-b hover:bg-gray-50">
                                 <td class="py-3 px-6">
@@ -55,10 +55,11 @@
                                         @php $statuses = ['Hadir', 'Izin', 'Sakit', 'Alpa']; @endphp
                                         @foreach ($statuses as $status)
                                             <label class="inline-flex items-center">
-                                                <input type="radio" name="status[{{ $record->id }}]"
-                                                    value="{{ $status }}"
-                                                    class="form-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500"
-                                                    @checked($record->status == $status)>
+                                                <input type="radio" 
+                                                       name="status_visible[{{ $record->id }}]"
+                                                       value="{{ $status }}"
+                                                       class="form-radio h-5 w-5 text-indigo-600 focus:ring-0 status-radio"
+                                                       data-record-id="{{ $record->id}}">
                                                 <span class="ml-2">{{ $status }}</span>
                                             </label>
                                         @endforeach
@@ -75,10 +76,76 @@
                     </tbody>
                 </table>
             </div>
-
+            
             <div class="p-6 border-t border-gray-200">
                 {{ $records->links() }}
             </div>
         </div>
+        <div id="hidden-inputs-container-absensi"></div>
     </form>
+    @push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const absensiForm = document.getElementById('absensi-form');
+    const tableBody = document.getElementById('absensi-table-body');
+    const hiddenContainer = document.getElementById('hidden-inputs-container-absensi');
+    
+    if (absensiForm && tableBody && hiddenContainer) {
+        const storageKey = 'absensiState_{{ $sesi->id }}';
+        
+        // 1. Ambil data status yang sudah tersimpan di browser (jika ada).
+        let storedState = JSON.parse(sessionStorage.getItem(storageKey)) || {};
+
+        // 2. Siapkan data status awal dari server untuk halaman ini saja.
+        let serverState = {};
+        @foreach ($records as $record)
+            serverState[{{ $record->id }}] = '{{ $record->status ?? 'Hadir' }}';
+        @endforeach
+
+        // 3. Gabungkan keduanya. Pilihan yang sudah Anda buat di browser (storedState) akan diutamakan.
+        let absensiState = { ...serverState, ...storedState };
+
+        // 4. Fungsi untuk mencocokkan tampilan radio button dengan state yang sudah digabung
+        const syncRadios = () => {
+            for (const recordId in absensiState) {
+                const status = absensiState[recordId];
+                const radio = tableBody.querySelector(`input[data-record-id="${recordId}"][value="${status}"]`);
+                if (radio) {
+                    radio.checked = true;
+                }
+            }
+        };
+
+        // 5. Saat radio button diubah, update state dan simpan ke sessionStorage
+        tableBody.addEventListener('change', (event) => {
+            const radio = event.target;
+            if (radio.classList.contains('status-radio')) {
+                const recordId = radio.dataset.recordId;
+                const newStatus = radio.value;
+                absensiState[recordId] = newStatus; // Update state gabungan
+                sessionStorage.setItem(storageKey, JSON.stringify(absensiState)); // Simpan state gabungan
+            }
+        });
+
+        // 6. Saat form disubmit, buat input hidden untuk semua state
+        absensiForm.addEventListener('submit', (event) => {
+            hiddenContainer.innerHTML = '';
+            for (const recordId in absensiState) {
+                const status = absensiState[recordId];
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `status[${recordId}]`;
+                hiddenInput.value = status;
+                hiddenContainer.appendChild(hiddenInput);
+            }
+            sessionStorage.removeItem(storageKey);
+        });
+
+        // Panggil fungsi sinkronisasi saat halaman dimuat
+        syncRadios();
+    }
+});
+</script>
+@endpush
 </x-app-layout>
+

@@ -55,13 +55,23 @@
                         <span>Pembina</span>
                     </a>
 
+                    <a href="{{ route('kegiatan.index') }}"
+                        class="flex items-center gap-3 py-3 px-6 transition-colors duration-200 {{ request()->routeIs('kegiatan.*')
+                            ? 'bg-gray-700/50 text-white border-l-4 border-red-500'
+                            : 'text-gray-400 hover:bg-gray-700/50 hover:text-white' }}">
+                        <i class="fa-solid fa-calendar-days fa-fw"></i>
+                        <span>Kegiatan</span>
+                    </a>
+
                     <a
                         href="{{ route('absensi.index') }}"class="flex items-center gap-3 py-3 px-6 transition-colors duration-200 {{ request()->routeIs('absensi.*')
-                            ? 'bg-gray-700/50 text-white border-l-4 border-red-500'
+                            ? 'bg-gry-700/50 text-white border-l-4 border-red-500'
                             : 'text-gray-400 hover:bg-gray-700/50 hover:text-white' }}">
                         <i class="fa-solid fa-clipboard-user fa-fw"></i>
                         <span>Absensi</span>
                     </a>
+
+
                 </nav>
 
                 <div class="px-4 py-4 mt-4">

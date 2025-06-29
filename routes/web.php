@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\PembinaController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\KegiatanController;
 use App\Models\Anggota; // Import model Anggota
 use App\Models\Pembina; // Asumsi ada model Pembina
 use App\Models\SesiAbsensi;
-use App\Http\Controllers\AbsensiController;
+use App\Models\Kegiatan;
 
 // Halaman landing default, bisa dihapus jika tidak perlu
 Route::redirect('/', '/login');
@@ -40,13 +42,30 @@ Route::get('/dashboard', function () {
         'records as alpa_count' => fn($q) => $q->where('status', 'Alpa'),
     ])->latest('tanggal')->first();
 
+     $kegiatanTerbaru = Kegiatan::with('pesertas')->latest('tanggal_kegiatan')->first();
+
+     $chartPesertaData = null; // Default null jika tidak ada kegiatan
+    if ($kegiatanTerbaru) {
+        $pesertasByTingkat = $kegiatanTerbaru->pesertas->groupBy('tingkat_kelas');
+        $chartPesertaData = [
+            'labels' => ['Peserta Kelas X', 'Peserta Kelas XI', 'Peserta Kelas XII'],
+            'data' => [
+                $pesertasByTingkat->get('X', collect())->count(),
+                $pesertasByTingkat->get('XI', collect())->count(),
+                $pesertasByTingkat->get('XII', collect())->count(),
+            ]
+        ];
+    }
+
     // Kirim semua data ke view
     return view('dashboard', [
         'totalAnggota' => $totalAnggota,
         'anggotaAktif' => $anggotaAktif, // <-- PASTIKAN DIKIRIM DI SINI
         'pembina' => $pembinaTerbaru,
         'chartData' => $chartData,
-        'sesiTerbaru' => $sesiTerbaru, 
+        'sesiTerbaru' => $sesiTerbaru,
+        'kegiatanTerbaru' => $kegiatanTerbaru,
+         'chartPesertaData' => $chartPesertaData, 
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -66,6 +85,12 @@ Route::middleware('auth')->group(function () {
 
     // Resource route untuk Pembina
     Route::resource('pembina', PembinaController::class);
+
+Route::post('/kegiatan/{kegiatan}/peserta', [KegiatanController::class, 'syncPeserta'])->name('kegiatan.peserta.sync');
+Route::get('/kegiatan/{kegiatan}/manage', [KegiatanController::class, 'manage'])->name('kegiatan.manage');
+Route::post('/kegiatan/{kegiatan}/fotos', [KegiatanController::class, 'uploadFoto'])->name('kegiatan.fotos.store');
+Route::delete('/kegiatan/fotos/{foto}', [KegiatanController::class, 'destroyFoto'])->name('fotos.destroy');
+Route::resource('kegiatan', KegiatanController::class);
 
     // Untuk Absensi
     Route::resource('absensi', AbsensiController::class)->parameters([
