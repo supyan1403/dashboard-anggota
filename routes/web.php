@@ -12,7 +12,9 @@ use App\Models\SesiAbsensi;
 use App\Models\Kegiatan;
 
 // Halaman landing default, bisa dihapus jika tidak perlu
-Route::redirect('/', '/login');
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // Dashboard utama setelah login
 // routes/web.php

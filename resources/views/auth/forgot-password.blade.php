@@ -1,48 +1,60 @@
 <x-guest-layout>
-    <div class="min-h-screen flex bg-gray-100">
+    <div class="min-h-screen flex bg-white">
 
-        <div class="hidden lg:flex w-1/3 bg-red-900 justify-center items-center p-12">
-            <div class="text-center text-white">
-                <img class="h-40 w-auto mx-auto mb-6" src="{{ asset('images/logo-aplikasi.png') }}" alt="Logo Aplikasi">
-                <h1 class="text-3xl font-bold mb-4">Lupa Password Anda?</h1>
-                <p class="text-lg opacity-80">
-                    Tidak masalah. Cukup masukkan email Anda dan kami akan membantu Anda.
-                </p>
+        <div class="hidden lg:flex w-3/5 relative">
+            <img class="absolute inset-0 h-full w-full object-cover" src="{{ asset('images/login-background.jpg') }}" alt="Background Login">
+            <div class="absolute inset-0 bg-gradient-to-t from-red-900 via-red-800/80 to-red-600/30"></div>
+            <div class="relative z-10 flex flex-col justify-center items-center w-full text-white p-12">
+                <div class="mb-8">
+                    <img class="h-40 w-auto" src="{{ asset('images/logo-aplikasi.png') }}" alt="Logo Aplikasi">
+                </div>
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold tracking-tight">Lupa Password Anda?</h1>
+                    <p class="mt-4 text-lg max-w-lg opacity-80">
+                        Tidak masalah. Cukup masukkan email Anda dan kami akan mengirimkan tautan untuk mengatur ulang password.
+                    </p>
+                </div>
             </div>
         </div>
 
-        <div class="flex flex-1 justify-center items-center p-6 sm:p-12">
-            <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-
-                <div class="mb-4 text-sm text-gray-600">
-                    {{ __('Masukkan alamat email Anda yang terdaftar. Kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda.') }}
+        <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-gray-50">
+            <div class="mx-auto w-full max-w-sm">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-900">Reset Password</h2>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Masukkan email terdaftar Anda di bawah ini.
+                    </p>
                 </div>
 
-                <x-auth-session-status class="mb-4" :status="session('status')" />
+                <div class="mt-8">
+                    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-                <form method="POST" action="{{ route('password.email') }}" class="mt-6 space-y-4">
-                    @csrf
+                    <form method="POST" action="{{ route('password.email') }}" class="space-y-6">
+                        @csrf
 
-                    <div>
-                        <x-input-label for="email" value="Email" />
-                        <x-text-input id="email" class="block mt-1 w-full" type="email" name="email"
-                            :value="old('email')" required autofocus />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                    </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Alamat Email</label>
+                            <div class="mt-1">
+                                <input id="email" name="email" type="email" autocomplete="email" required value="{{ old('email') }}"
+                                       class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm">
+                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                            </div>
+                        </div>
 
-                    <div class="pt-4">
-                        <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-900 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-900">
-                            {{ __('Kirim Tautan Reset Password') }}
-                        </button>
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-red-800 hover:text-red-700">
-                            &larr; Kembali ke Login
+                        <div>
+                            <button type="submit"
+                                    class="flex w-full justify-center rounded-md border border-transparent bg-red-800 py-3 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                Kirim Tautan Reset Password
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-6 text-center">
+                        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">
+                            &larr; Kembali ke halaman Login
                         </a>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

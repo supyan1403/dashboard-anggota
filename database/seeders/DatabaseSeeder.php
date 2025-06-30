@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,13 +12,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Anda bisa membuat 1 user default untuk login jika mau
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'paskibrasmanespa@gmail.com',
+        // Menghapus atau memberi komentar pada User::factory(10) jika ada
+        // User::factory(10)->create();
+
+        // Membuat satu user admin secara spesifik
+        User::create([
+            'name' => 'Admin',
+            'username' => 'admin', // <-- Ini username untuk login
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'), // <-- Passwordnya adalah 'password'
         ]);
 
-        // Panggil AnggotaSeeder yang sudah kita buat
+        // Anda juga bisa memanggil seeder lain di sini jika perlu
         $this->call([
             AnggotaSeeder::class,
         ]);

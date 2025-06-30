@@ -6,7 +6,7 @@
                 <span class="font-semibold">{{ $kegiatan->nama_kegiatan }}</span> | Tanggal: <span class="font-semibold">{{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan)->format('d F Y') }}</span>
             </p>
         </div>
-        <a href="{{ route('kegiatan.index') }}" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">&larr; Kembali</a>
+        <a href="{{ route('kegiatan.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 active:bg-gray-300 focus:outline-none focus:border-gray-200 focus:ring ring-gray-200 disabled:opacity-25 transition ease-in-out duration-150">&larr; Kembali</a>
     </div>
 
     <div class="mb-8 bg-white p-6 rounded-lg shadow-md">
