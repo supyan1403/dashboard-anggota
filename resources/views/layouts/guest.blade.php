@@ -13,6 +13,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased">
+        {{-- Langsung merender konten tanpa div pembungkus yang membatasi --}}
         {{ $slot }}
     </body>
 </html>
